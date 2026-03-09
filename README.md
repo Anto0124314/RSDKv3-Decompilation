@@ -90,5 +90,25 @@ The following cmake arguments are available when compiling:
 - `RETRO_ORIGINAL_CODE`: Removes any custom code. *A playable game will not be built with this enabled.* Takes a boolean, defaults to `off`.
 - `RETRO_SDL_VERSION`: *Only change this if you know what you're doing.* Switches between using SDL1 or SDL2. Takes an integer of either `1` or `2`, defaults to `2`.
 
+# Getting Video Support To Work
+To get video support to work, you need to change your CORS policy on how you serve the port itself, that being using the [RSDK-Library Manager](https://github.com/rsdk-library/rsdk-library.github.io) (*Recommended*), or your own interface. This is required as libtheora/theoraplay requires multiple threads to work, this is an issue as modern browsers **WILL BLOCK MULTI-THREADING BY DEFAULT.** If you dont videos will not play, so don't open an issue saying that videos wont play, as most likely you forgot to set the required http response headers: 
+```http
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+```
+You might be asking, "HOW TF AM I SUPPOSED TO THIS???????"
+If so here are some simple solutions:
+
+## Setting these in whatever interface you're using to launch the port (whether that be custom or by using the RSDK-Library Manager)
+Whether if you're using the [RSDK-Library Manager](https://github.com/rsdk-library/rsdk-library.github.io), or using your own interface for this web port, it is **STUPID** easy to setup.
+
+All *you* need to do is to get this: https://raw.githubusercontent.com/gzuidhof/coi-serviceworker/refs/heads/master/coi-serviceworker.js (right-click the link and click on Save As... ), and drop it in the root directory where you are launching the port (if you're using the RSDK-Library Manager, just drop it in your out/ directory wherever the root repository is), and set this where your ```<head>``` of the .html file you're using to launch the port itself (aka where you're launching the RSDKv3.js/.wasm files, and for the RSDK-Library Manager, that is v3.html in your out/ directory): 
+
+```http
+<script src="coi-serviceworker.js"></script>
+```
+and after that, you're good to go!
+ 
+
 # Contact:
-Join the [Retro Engine Modding Discord Server](https://dc.railgun.works/retroengine) for any extra questions you may need to know about the decompilation or modding it.
+Join the [Retro Engine Modding Discord Server](https://dc.railgun.works/retroengine) for any extra questions you may need to know about the decompilation, modding it, or for any issues for this web port (not the video functionality that comes from this fork *obviously*, for that just go into issues in this repo.) by [Jdaslepre](https://github.com/Jdaslepre) that you would like to report (make sure to go into the #decomp-ports channel and go into RSDK Web Ports once you join.)
