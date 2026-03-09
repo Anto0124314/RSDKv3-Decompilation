@@ -96,7 +96,7 @@ To get video support to work, you need to change your CORS policy on how you ser
 Cross-Origin-Opener-Policy: same-origin
 Cross-Origin-Embedder-Policy: require-corp
 ```
-You might be asking, "HOW TF AM I SUPPOSED TO THIS???????"
+You might be asking, "HOW TF AM I SUPPOSED TO DO THIS???????"
 If so here are some simple solutions:
 
 ## Setting these in whatever interface you're using to launch the port (whether that be custom or by using the RSDK-Library Manager)
