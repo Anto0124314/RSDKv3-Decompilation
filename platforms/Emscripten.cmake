@@ -21,6 +21,7 @@ set(EMSCRIPTEN_FLAGS
     -DRETRO_USING_OPENGL=0
     -DRETRO_USING_SDL2=1
     -O3
+    -pthread
 )
 
 set(emsc_link_options
@@ -37,6 +38,8 @@ set(emsc_link_options
     -lm
     -lidbfs.js
     -flto
+    -pthread
+    -sPTHREAD_POOL_SIZE=2 
 )
 
 target_compile_options(RetroEngine PRIVATE ${EMSCRIPTEN_FLAGS})

@@ -1,5 +1,10 @@
 #include "RetroEngine.hpp"
+#include "Video.hpp"
 #include <string>
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 int currentVideoFrame = 0;
 int videoFrameCount   = 0;
@@ -36,6 +41,13 @@ static void videoClose(THEORAPLAY_Io *io)
 
 void PlayVideoFile(char *filePath)
 {
+    #ifdef __EMSCRIPTEN__
+    EM_ASM({
+        console.log("=== PlayVideoFile:", UTF8ToString($0), "===");
+    }, filePath);
+#endif
+
+
     char pathBuffer[0x100];
     int len = StrLength(filePath);
 
@@ -102,16 +114,28 @@ void PlayVideoFile(char *filePath)
         callbacks.userdata = (void *)file;
 #if RETRO_USING_SDL2 && !RETRO_USING_OPENGL
         videoDecoder = THEORAPLAY_startDecode(&callbacks, /*FPS*/ 30, THEORAPLAY_VIDFMT_IYUV, GetGlobalVariableByName("Options.Soundtrack") ? 1 : 0);
+        EM_ASM({console.log("Used SDL2 path"); });
 #endif
 
         // TODO: does SDL1.2 support YUV?
 #if RETRO_USING_SDL1 && !RETRO_USING_OPENGL
         videoDecoder = THEORAPLAY_startDecode(&callbacks, /*FPS*/ 30, THEORAPLAY_VIDFMT_RGBA, GetGlobalVariableByName("Options.Soundtrack") ? 1 : 0);
+        EM_ASM({console.log("Used SDL1 path"); });
 #endif
 
 #if RETRO_USING_OPENGL
         videoDecoder = THEORAPLAY_startDecode(&callbacks, /*FPS*/ 30, THEORAPLAY_VIDFMT_RGBA, GetGlobalVariableByName("Options.Soundtrack") ? 1 : 0);
+        EM_ASM({console.log("Used OGL path"); });
 #endif
+
+#ifdef __EMSCRIPTEN__
+        if (videoDecoder == NULL) {
+            EM_ASM({console.log("videoDecoder is null:", $0); });
+        }
+        else {
+            EM_ASM({console.log("videoDecoder is ok"); });
+        }
+        #endif
 
         if (!videoDecoder) {
             PrintLog("Video Decoder Error!");
@@ -120,7 +144,11 @@ void PlayVideoFile(char *filePath)
         while (!videoVidData) {
             if (!videoVidData)
                 videoVidData = THEORAPLAY_getVideo(videoDecoder);
+            if (!videoVidData) {
+                SDL_Delay(1);
+            }
         }
+
         if (!videoVidData) {
             PrintLog("Video Error!");
             return;

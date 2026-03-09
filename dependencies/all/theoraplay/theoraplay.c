@@ -588,7 +588,8 @@ static void *WorkerThreadEntry(void *_this)
 {
     TheoraDecoder *ctx = (TheoraDecoder *) _this;
     WorkerThread(ctx);
-    //printf("Worker thread is done.\n");
+    // printf("Worker thread is done.\n");
+    printf("THEORAPLAY returning NULL at line %d\n", __LINE__);
     return NULL;
 } // WorkerThreadEntry
 
@@ -616,14 +617,21 @@ THEORAPLAY_Decoder *THEORAPLAY_startDecodeFile(const char *fname,
                                                THEORAPLAY_VideoFormat vidfmt,
                                                unsigned int audio_bitstream)
 {
+    printf("THEORAPLAY_startDecode called\n");
+    printf("THEORAPLAY_startDecode called\n");
+    printf("  vidfmt: %d\n", vidfmt);
+    printf("  maxframes: %u\n", maxframes);
+    fflush(stdout);
     THEORAPLAY_Io *io = (THEORAPLAY_Io *) malloc(sizeof (THEORAPLAY_Io));
     if (io == NULL)
+        printf("THEORAPLAY returning NULL at line %d\n", __LINE__);
         return NULL;
 
     FILE *f = fopen(fname, "rb");
     if (f == NULL)
     {
         free(io);
+        printf("THEORAPLAY returning NULL at line %d\n", __LINE__);
         return NULL;
     } // if
 
@@ -677,6 +685,7 @@ THEORAPLAY_Decoder *THEORAPLAY_startDecode(THEORAPLAY_Io *io,
 startdecode_failed:
     io->close(io);
     free(ctx);
+    printf("THEORAPLAY returning NULL at line %d\n", __LINE__);
     return NULL;
 } // THEORAPLAY_startDecode
 

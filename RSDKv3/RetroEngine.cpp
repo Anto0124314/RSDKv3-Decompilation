@@ -9,7 +9,7 @@
 #endif
 
 bool usingCWD        = false;
-bool engineDebugMode = false;
+bool engineDebugMode = true;
 byte renderType      = RENDER_SW;
 
 RetroEngine Engine = RetroEngine();
