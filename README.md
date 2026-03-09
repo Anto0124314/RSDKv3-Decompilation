@@ -105,7 +105,10 @@ Whether if you're using the [RSDK-Library Manager](https://github.com/rsdk-libra
 All *you* need to do is to get this: https://raw.githubusercontent.com/gzuidhof/coi-serviceworker/refs/heads/master/coi-serviceworker.js (right-click the link and click on Save As... ), and drop it in the root directory where you are launching the port (if you're using the RSDK-Library Manager, just drop it in your out/ directory wherever the root repository is), and set this where your ```<head>``` of the .html file you're using to launch the port itself (aka where you're launching the RSDKv3.js/.wasm files, and for the RSDK-Library Manager, that is v3.html in your out/ directory): 
 
 ```http
-<script src="coi-serviceworker.js"></script>
+<head>
+    <script src="coi-serviceworker.js"></script>
+    <!-- Your other meta tags and scripts go here -->
+</head>
 ```
 and after that, you're good to go!
  
