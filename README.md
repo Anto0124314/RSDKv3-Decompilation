@@ -60,7 +60,7 @@ If you've already cloned the repo, run this command inside of the repository:
 
 ## Getting dependencies
 
-The only dependency that you need is libtheora, which you can find at: https://xiph.org/downloads/. Any other dependency will be handled by Emscripten.
+The only dependency that you need is libtheora, which you can find at: https://xiph.org/downloads/. Any other dependency will be handled by Emscripten. (**do note that you will need specifically libtheora 1.1.1 as the latest version [1.2.0 at the time of writing] doesnt have a cpu.c**)
 
 After downloading libtheora, unzip it in `dependencies/all` as 'libtheora'.
 
