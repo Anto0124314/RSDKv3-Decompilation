@@ -1,4 +1,4 @@
-![](header.png?raw=true)
+![header](header.png?raw=true)
 
 A complete decompilation of Retro Engine v3.
 
@@ -42,45 +42,40 @@ Even if your platform isn't supported by the official releases, you **must** buy
 * If `useSteamDir` is set in the config (Windows only), the game will try to load savedata from Steam's `userdata` directory (where the original Steam version saves to).
 * Added the idle screen dimming feature from Sonic Mania Plus, as well as allowing the user to disable it or set how long it takes for the screen to dim.
 
+
 # How to Build
 
-This project uses [CMake](https://cmake.org/), a versatile building system that supports many different compilers and platforms. You can download CMake [here](https://cmake.org/download/). **(Make sure to enable the feature to add CMake to the system PATH during the installation!)**
-
-You will also need [Emscripten.](https://emscripten.org/docs/getting_started/downloads.html) Download and install it by following the provided instructions on the page.
+This project uses [CMake](https://cmake.org/), a versatile building system that supports many different compilers and platforms. You can download CMake [here](https://cmake.org/download/). **(Make sure to enable the feature to add CMake to the system PATH during the installation if you're on Windows!)**
 
 ## Get the source code
 
 In order to clone the repository, you need to install Git, which you can get [here](https://git-scm.com/downloads).
 
 Clone the repo **recursively**, using:
-`git clone --recursive https://github.com/ant9012/RSDKv3-Decompilation.git`
+`git clone --recursive --single-branch --branch web https://github.com/ant9012/RSDKv3-Decompilation.git`
 
 If you've already cloned the repo, run this command inside of the repository:
-```git submodule update --init --recursive```
+```git submodule update --init```
 
 ## Getting dependencies
 
-The only dependency that you need is libtheora, which you can find at: https://xiph.org/downloads/. Any other dependency will be handled by Emscripten. (**do note that you will need specifically libtheora 1.1.1 as the latest version [1.2.0 at the time of writing] doesnt have a cpu.c in it's root directory**)
+The only dependency that you need is libtheora, which you can find at: https://xiph.org/downloads/. Any other dependency will be handled by Emscripten.
 
 After downloading libtheora, unzip it in `dependencies/all` as 'libtheora'.
 
-## Compiling
+## Compiling for Emscripten
 
 > [!NOTE]  
 > This fork does *not* run standalone! If you want to host your own build, you will need to build the [RSDK-Library Engine Manager](https://github.com/Jdsle/RSDK), or develop your own interface.
 
-> Just looking for prebuilt versions? They're hosted at https://Jdsle.github.io/RSDK
+> Also you will need to replace RSDKv3.js/wasm in the public/modules folder if you're using the [RSDK-Library Engine Manager](https://github.com/Jdsle/RSDK), if you want prebuilt versions go here: https://github.com/ant9012/rsdk-library-fork/tree/main/public/modules and for playable prebuilts if you simply want to play this web port, go here: https://ant9012.github.io/rsdk-library-fork
 
 Compiling is as simple as typing the following in the root repository directory:
 ```
 emcmake cmake -B build
-cmake --build build
+cmake --build build --config release
 ```
 
-The resulting build will be located somewhere in `build/` depending on your system.
-
-The following cmake arguments are available when compiling:
-- Use these by adding `-D[flag-name]=[value]` to the end of the `emcmake cmake -B build` command. For example, to build with `RETRO_DISABLE_PLUS` set to on, add `-DRETRO_DISABLE_PLUS=on` to the command.
 
 ### RSDKv3 flags
 - `RETRO_DISABLE_PLUS`: Whether or not to disable the Plus DLC. Takes a boolean (on/off): build with `on` when compiling for distribution. Defaults to `off`.
@@ -90,8 +85,8 @@ The following cmake arguments are available when compiling:
 - `RETRO_ORIGINAL_CODE`: Removes any custom code. *A playable game will not be built with this enabled.* Takes a boolean, defaults to `off`.
 - `RETRO_SDL_VERSION`: *Only change this if you know what you're doing.* Switches between using SDL1 or SDL2. Takes an integer of either `1` or `2`, defaults to `2`.
 
-# Getting Video Support To Work
-To get video support to work, you need to change your CORS policy on how you serve the port itself, that being using the [RSDK-Library Manager](https://github.com/rsdk-library/rsdk-library.github.io) (*Recommended*), or your own interface. This is required as libtheora/theoraplay requires multiple threads to work, this is an issue as modern browsers **WILL BLOCK MULTI-THREADING BY DEFAULT.** If you dont videos will not play, so don't open an issue saying that videos wont play, as most likely you forgot to set the required http response headers: 
+# Getting this to work on custom interfaces
+To get this web port to work, you need to change your CORS policy on how you serve the port itself, that being your own interface. This is required as libtheora/theoraplay requires multiple threads to work, this is an issue as modern browsers **WILL BLOCK MULTI-THREADING BY DEFAULT.** If you dont the port will not launch, so don't open an issue saying that the port wont open, as most likely you forgot to set the required http response headers: 
 ```http
 Cross-Origin-Opener-Policy: same-origin
 Cross-Origin-Embedder-Policy: require-corp
@@ -99,10 +94,10 @@ Cross-Origin-Embedder-Policy: require-corp
 You might be asking, "HOW TF AM I SUPPOSED TO DO THIS???????"
 If so here are some simple solutions:
 
-## Setting these in whatever interface you're using to launch the port (whether that be custom or by using the RSDK-Library Manager)
-Whether if you're using the [RSDK-Library Manager](https://github.com/rsdk-library/rsdk-library.github.io), or using your own interface for this web port, it is **STUPID** easy to setup.
+## Setting these in whatever interface you're using to launch the port
+Since you're using a custom interface, it is still **STUPID** easy to setup.
 
-All *you* need to do is to get this: https://raw.githubusercontent.com/gzuidhof/coi-serviceworker/refs/heads/master/coi-serviceworker.js (right-click the link and click on Save As... ), and drop it in the root directory where you are launching the port (if you're using the RSDK-Library Manager, just drop it in your out/ directory wherever the root repository is), and set this where your ```<head>``` of the .html file you're using to launch the port itself (aka where you're launching the RSDKv3.js/.wasm files, and for the RSDK-Library Manager, that is v3.html in your out/ directory): 
+All *you* need to do is to get this: https://raw.githubusercontent.com/gzuidhof/coi-serviceworker/refs/heads/master/coi-serviceworker.js (right-click the link and click on Save As... ), and drop it in the root directory where you are launching the port, and set this where your ```<head>``` of the .html file you're using to launch the port itself (aka where you're launching the RSDKv3.js/.wasm files):
 
 ```html
 <head>
@@ -111,7 +106,6 @@ All *you* need to do is to get this: https://raw.githubusercontent.com/gzuidhof/
 </head>
 ```
 and after that, you're good to go!
- 
 
 # Contact:
-Join the [Retro Engine Modding Discord Server](https://dc.railgun.works/retroengine) for any extra questions you may need to know about the decompilation, modding it, or for any issues for this web port (not the video functionality that comes from this fork *obviously*, for that just go into issues in this repo.) by [Jdaslepre](https://github.com/Jdaslepre) that you would like to report (make sure to go into the #decomp-ports channel and go into RSDK Web Ports once you join.)
+Join the [Retro Engine Modding Discord Server](https://dc.railgun.works/retroengine) for any extra questions you may need to know about the decompilation or modding it.
